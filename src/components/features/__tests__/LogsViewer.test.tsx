@@ -13,7 +13,7 @@ vi.mock('../../../lib/api', () => ({
 
 // Mock ELDLogCard to avoid complex dependencies
 vi.mock('../ELDLogCard', () => ({
-	ELDLogCard: ({ day, dayIndex }: { day: any; dayIndex: number }) => (
+	ELDLogCard: ({ dayIndex }: { dayIndex: number }) => (
 		<div data-testid={`eld-card-${dayIndex}`}>Day {dayIndex + 1}</div>
 	),
 }))
