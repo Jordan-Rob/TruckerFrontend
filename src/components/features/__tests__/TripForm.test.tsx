@@ -46,13 +46,19 @@ describe('TripForm', () => {
 		const cycleHours = screen.getByLabelText(/cycle hours used/i)
 		
 		// HTML input values may be formatted differently, check numeric equivalence
-		expect(parseFloat(currentLat.value as string)).toBeCloseTo(40.7128, 4)
-		expect(parseFloat(currentLon.value as string)).toBeCloseTo(-74.0060, 4)
-		expect(parseFloat(pickupLat.value as string)).toBeCloseTo(39.9526, 4)
-		expect(parseFloat(pickupLon.value as string)).toBeCloseTo(-75.1652, 4)
-		expect(parseFloat(dropoffLat.value as string)).toBeCloseTo(41.8781, 4)
-		expect(parseFloat(dropoffLon.value as string)).toBeCloseTo(-87.6298, 4)
-		expect(parseFloat(cycleHours.value as string)).toBeCloseTo(10, 0)
+		const checkValue = (input: HTMLElement, expected: number, precision = 4) => {
+			const inputElement = input as HTMLInputElement
+			const value = parseFloat(inputElement.value || '0')
+			expect(value).toBeCloseTo(expected, precision)
+		}
+
+		checkValue(currentLat, 40.7128)
+		checkValue(currentLon, -74.0060)
+		checkValue(pickupLat, 39.9526)
+		checkValue(pickupLon, -75.1652)
+		checkValue(dropoffLat, 41.8781)
+		checkValue(dropoffLon, -87.6298)
+		checkValue(cycleHours, 10, 0)
 		expect(screen.getByLabelText(/save trip/i)).toBeChecked()
 	})
 
