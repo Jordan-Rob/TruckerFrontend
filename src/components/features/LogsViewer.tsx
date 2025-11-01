@@ -1,9 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../lib/api'
-import { ELDCanvas } from './ELDCanvas'
-import type { ELDDay } from '../../types'
+import { ELDLogCard } from './ELDLogCard'
+import type { ELDDay, ELDLogInfo } from '../../types'
 
-export function LogsViewer() {
+interface LogsViewerProps {
+	tripData?: {
+		current_location?: { lat: number; lon: number }
+		pickup_location?: { lat: number; lon: number }
+		dropoff_location?: { lat: number; lon: number }
+		distance_m?: number
+	}
+	eldInfo?: ELDLogInfo
+}
+
+export function LogsViewer({ tripData, eldInfo }: LogsViewerProps = {}) {
 	const params = new URLSearchParams(window.location.search)
 	const tripId = params.get('trip_id')
 	const durationParam = params.get('duration_s')
@@ -39,22 +49,16 @@ export function LogsViewer() {
 	}
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4">
 			{data.days.map((day: ELDDay, idx: number) => (
-				<div key={idx} className="rounded-lg border border-border bg-background">
-					<div className="px-6 py-4 border-b border-border flex items-center justify-between">
-						<div className="font-semibold text-foreground">Day {idx + 1}</div>
-						<div className="text-xs text-muted-foreground">
-							Segments: {day.segments?.length || 0}
-							{day.note && (
-								<span className="ml-2 text-orange-600">({day.note})</span>
-							)}
-						</div>
-					</div>
-					<div className="p-4">
-						<ELDCanvas segments={day.segments || []} />
-					</div>
-				</div>
+				<ELDLogCard
+					key={idx}
+					day={day}
+					dayIndex={idx}
+					tripData={tripData}
+					eldInfo={eldInfo}
+					initialDate={new Date()}
+				/>
 			))}
 		</div>
 	)

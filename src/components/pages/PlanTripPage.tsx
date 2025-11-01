@@ -1,16 +1,49 @@
 import { useState } from 'react'
-import { TripForm } from '../features/TripForm'
-import { RouteMap } from '../features/RouteMap'
-import { ELDCanvas } from '../features/ELDCanvas'
-import type { TripPlanResult, ELDDay } from '../../types'
+import { TripForm, RouteMap, ELDLogCard } from '../features'
+import type { TripPlanResult, ELDDay, ELDLogInfo } from '../../types'
 import { api } from '../../lib/api'
 
 export function PlanTripPage() {
 	const [routeGeojson, setRouteGeojson] = useState<any | null>(null)
 	const [logs, setLogs] = useState<{ days: ELDDay[] } | null>(null)
+	const [tripPlanData, setTripPlanData] = useState<any | null>(null)
+	const [eldInfo] = useState<ELDLogInfo>({
+		truck_trailer_number: '',
+		carrier_name: '',
+		home_office_address: '',
+		home_terminal_address: '',
+	})
 
-	const handlePlanned = async (result: TripPlanResult) => {
+	const handlePlanned = async (result: TripPlanResult, formValues?: any) => {
 		const data = result.data || result // Handle both old and new structure
+		
+		// Store trip plan data for location info
+		// Get locations from form values if available, otherwise from trip data
+		setTripPlanData({
+			current_location: formValues ? {
+				lat: formValues.current_lat,
+				lon: formValues.current_lon,
+			} : (data as any).trip ? {
+				lat: (data as any).trip.current_lat,
+				lon: (data as any).trip.current_lon,
+			} : undefined,
+			pickup_location: formValues ? {
+				lat: formValues.pickup_lat,
+				lon: formValues.pickup_lon,
+			} : (data as any).trip ? {
+				lat: (data as any).trip.pickup_lat,
+				lon: (data as any).trip.pickup_lon,
+			} : undefined,
+			dropoff_location: formValues ? {
+				lat: formValues.dropoff_lat,
+				lon: formValues.dropoff_lon,
+			} : (data as any).trip ? {
+				lat: (data as any).trip.dropoff_lat,
+				lon: (data as any).trip.dropoff_lon,
+			} : undefined,
+			distance_m: data.distance_m,
+		})
+		
 		// Update route for map – coerce to valid FeatureCollection
 		try {
 			if (data?.geometry) {
@@ -57,7 +90,9 @@ export function PlanTripPage() {
 				<h2 className="text-3xl font-semibold text-foreground mb-8">Plan Your Trip</h2>
 				<div className="grid lg:grid-cols-3 gap-8">
 					<div className="lg:col-span-1">
-						<TripForm onPlanned={handlePlanned} />
+						<TripForm 
+							onPlanned={(result: TripPlanResult, formValues?: any) => handlePlanned(result, formValues)} 
+						/>
 					</div>
 					<div className="lg:col-span-2 space-y-6">
 						<div className="bg-background rounded-lg border border-border p-4">
@@ -69,25 +104,16 @@ export function PlanTripPage() {
 								<h3 className="text-lg font-semibold text-foreground mb-4">
 									Daily ELD Logs
 								</h3>
-								<div className="space-y-6">
+								<div className="space-y-4">
 									{logs.days.map((day: ELDDay, idx: number) => (
-										<div
+										<ELDLogCard
 											key={idx}
-											className="rounded-lg border border-border bg-background"
-										>
-											<div className="px-6 py-4 border-b border-border flex items-center justify-between">
-												<div className="font-semibold text-foreground">Day {idx + 1}</div>
-												<div className="text-xs text-muted-foreground">
-													Segments: {day.segments.length}
-													{day.note && (
-														<span className="ml-2 text-orange-600">({day.note})</span>
-													)}
-												</div>
-											</div>
-											<div className="p-4">
-												<ELDCanvas segments={day.segments} />
-											</div>
-										</div>
+											day={day}
+											dayIndex={idx}
+											tripData={tripPlanData}
+											eldInfo={eldInfo}
+											initialDate={new Date()}
+										/>
 									))}
 								</div>
 							</div>

@@ -7,7 +7,7 @@ import { tripFormSchema, type TripFormValues, type TripPlanResult } from '../../
 import { api } from '../../lib/api'
 
 interface TripFormProps {
-	onPlanned?: (result: TripPlanResult) => void
+	onPlanned?: (result: TripPlanResult, formValues?: TripFormValues) => void
 }
 
 export function TripForm({ onPlanned }: TripFormProps) {
@@ -27,7 +27,7 @@ export function TripForm({ onPlanned }: TripFormProps) {
 
 	const [result, setResult] = useState<any>(null)
 	const planMutation = useMutation({
-		mutationFn: async (values: TripFormValues): Promise<TripPlanResult> => {
+		mutationFn: async (values: TripFormValues): Promise<{ result: TripPlanResult; formValues: TripFormValues }> => {
 			const payload = {
 				current_location: { lat: values.current_lat, lon: values.current_lon },
 				pickup_location: { lat: values.pickup_lat, lon: values.pickup_lon },
@@ -36,11 +36,12 @@ export function TripForm({ onPlanned }: TripFormProps) {
 			}
 			const url = values.persist ? '/api/plan_trip/?save=1' : '/api/plan_trip/'
 			const { data } = await api.post(url, payload)
-			return { data, current_cycle_hours_used: values.current_cycle_hours_used }
+			const result = { data, current_cycle_hours_used: values.current_cycle_hours_used }
+			return { result, formValues: values }
 		},
-		onSuccess: (result) => {
+		onSuccess: ({ result, formValues }) => {
 			setResult(result.data)
-			onPlanned && onPlanned(result)
+			onPlanned && onPlanned(result, formValues)
 		},
 	})
 

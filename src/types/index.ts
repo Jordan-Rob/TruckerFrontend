@@ -22,6 +22,18 @@ export interface ELDSegment {
 export interface ELDDay {
 	segments: ELDSegment[]
 	note?: string
+	date?: string // ISO date string
+	from_location?: { lat: number; lon: number; name?: string }
+	to_location?: { lat: number; lon: number; name?: string }
+	driving_miles?: number
+	total_mileage?: number
+}
+
+export interface ELDLogInfo {
+	truck_trailer_number?: string
+	carrier_name?: string
+	home_office_address?: string
+	home_terminal_address?: string
 }
 
 export interface TripPlanResult {
