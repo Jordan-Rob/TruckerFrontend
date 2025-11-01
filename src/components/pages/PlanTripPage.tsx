@@ -8,10 +8,10 @@ export function PlanTripPage() {
 	const [logs, setLogs] = useState<{ days: ELDDay[] } | null>(null)
 	const [tripPlanData, setTripPlanData] = useState<any | null>(null)
 	const [eldInfo] = useState<ELDLogInfo>({
-		truck_trailer_number: '',
-		carrier_name: '',
-		home_office_address: '',
-		home_terminal_address: '',
+		truck_trailer_number: 'TRK-2024-001 / TRL-2024-001',
+		carrier_name: 'Acme Transport Solutions',
+		home_office_address: '123 Main Street, Suite 100\nSpringfield, IL 62701',
+		home_terminal_address: '456 Industrial Blvd\nSpringfield, IL 62702',
 	})
 
 	const handlePlanned = async (result: TripPlanResult, formValues?: any) => {
@@ -113,6 +113,8 @@ export function PlanTripPage() {
 											tripData={tripPlanData}
 											eldInfo={eldInfo}
 											initialDate={new Date()}
+											allDays={logs.days}
+											routeGeometry={routeGeojson}
 										/>
 									))}
 								</div>
