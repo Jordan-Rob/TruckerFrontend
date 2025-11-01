@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+	/* Light minimalistic palette matching attached design */
+	--color-background: #ece9f0;
+	--color-foreground: #333333;
+	--color-muted: #e5e0ea;
+	--color-muted-foreground: #666666;
+	--color-primary: #6d5efc;
+	--color-primary-foreground: #ffffff;
+	--color-accent: #6d5efc;
+	--color-border: #d9d3e0;
+	--radius-lg: 8px;
+	--radius-md: 6px;
+}
+
+@layer base {
+	html, body, #root { 
+		height: 100%; 
+	}
+	body { 
+		@apply bg-background text-foreground antialiased;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+	}
+	a { 
+		@apply text-foreground hover:text-primary transition-colors;
+	}
+	h1, h2, h3, h4, h5, h6 {
+		@apply font-semibold tracking-tight;
+	}
+}
