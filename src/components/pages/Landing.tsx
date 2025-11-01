@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom'
+import { ExternalLink } from 'lucide-react'
 
 export function Landing() {
+	const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
+	const apiDocsUrl = `${apiUrl}/api/docs/`
+
 	return (
 		<section className="bg-background py-20">
 			<div className="max-w-6xl mx-auto px-6 py-16">
@@ -20,10 +24,13 @@ export function Landing() {
 						Plan a Trip
 					</Link>
 					<a
-						href="/api/docs/"
-						className="inline-flex items-center rounded-lg border border-border bg-background px-6 py-3 text-foreground font-medium hover:bg-muted transition-colors"
+						href={apiDocsUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-6 py-3 text-foreground font-medium hover:bg-muted transition-colors"
 					>
 						API Docs
+						<ExternalLink className="w-4 h-4" />
 					</a>
 				</div>
 				<div className="aspect-[16/10] rounded-lg border border-border bg-background mx-auto max-w-4xl p-8 flex items-center justify-center relative overflow-hidden">
